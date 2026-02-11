@@ -106,8 +106,46 @@ body::after {
 
 @media (max-width: 720px) {
   .overlay {
-    position: relative;
-    margin: 32px;
-    background: rgba(3, 5, 15, 0.95);
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    top: auto;
+    bottom: 20px;
+
+    margin: 0;
+    padding: 18px 18px 20px 18px;
+
+    max-width: none;
+    width: auto;
+
+    border-radius: 18px;
+    background: rgba(3, 5, 15, 0.92);
+    backdrop-filter: blur(18px);
+
+    animation: none;
+  }
+
+  .badge {
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    padding: 3px 12px;
+    margin-bottom: 12px;
+  }
+
+  .overlay h1 {
+    font-size: 1.35rem;
+    line-height: 1.2;
+  }
+
+  .overlay p {
+    font-size: 0.9rem;
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+
+  .hint {
+    margin-top: 14px;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
   }
 }
