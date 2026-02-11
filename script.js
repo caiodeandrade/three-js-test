@@ -74,8 +74,8 @@ function resetStar(i, initial = false) {
 // ===== ACELERAÇÃO =====
 
 let speedMultiplier = 0.03;
-let targetSpeed = 10;
-let acceleration = 0.02;
+let targetSpeed = 6;
+let acceleration = 0.008;
 
 function animate() {
   if (speedMultiplier < targetSpeed) {
