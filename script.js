@@ -16,8 +16,22 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.querySelector(".canvas-wrap").appendChild(renderer.domElement);
 
-const STAR_COUNT = 6000;
+// ===== CONTROLE DO MOUSE =====
 
+const mouse = { x: 0, y: 0 };
+const targetCamera = { x: 0, y: 0 };
+
+window.addEventListener("mousemove", (e) => {
+  mouse.x = (e.clientX / window.innerWidth - 0.5) * 2;
+  mouse.y = (e.clientY / window.innerHeight - 0.5) * 2;
+
+  targetCamera.x = mouse.x * 0.8;
+  targetCamera.y = -mouse.y * 0.8;
+});
+
+// ===== ESTRELAS =====
+
+const STAR_COUNT = 6000;
 const positions = new Float32Array(STAR_COUNT * 6);
 const baseSpeeds = new Float32Array(STAR_COUNT);
 
@@ -67,6 +81,11 @@ function animate() {
   if (speedMultiplier < targetSpeed) {
     speedMultiplier += acceleration;
   }
+
+  // movimento suave da câmera (efeito "pilotando")
+  camera.position.x += (targetCamera.x - camera.position.x) * 0.05;
+  camera.position.y += (targetCamera.y - camera.position.y) * 0.05;
+  camera.lookAt(0, 0, -50);
 
   for (let i = 0; i < STAR_COUNT; i++) {
     const base = i * 6;
