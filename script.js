@@ -16,10 +16,9 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.querySelector(".canvas-wrap").appendChild(renderer.domElement);
 
-// ===== ESTRELAS =====
-
 const STAR_COUNT = 6000;
-const positions = new Float32Array(STAR_COUNT * 3);
+
+const positions = new Float32Array(STAR_COUNT * 6);
 const baseSpeeds = new Float32Array(STAR_COUNT);
 
 for (let i = 0; i < STAR_COUNT; i++) {
@@ -29,13 +28,13 @@ for (let i = 0; i < STAR_COUNT; i++) {
 const geometry = new THREE.BufferGeometry();
 geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
 
-const material = new THREE.PointsMaterial({
+const material = new THREE.LineBasicMaterial({
   color: 0xffffff,
-  size: 0.02,
-  sizeAttenuation: true,
+  transparent: true,
+  opacity: 0.9,
 });
 
-const stars = new THREE.Points(geometry, material);
+const stars = new THREE.LineSegments(geometry, material);
 scene.add(stars);
 
 function resetStar(i, initial = false) {
@@ -45,43 +44,52 @@ function resetStar(i, initial = false) {
   const y = (Math.random() - 0.5) * radius;
   const z = initial ? -Math.random() * 200 : -200;
 
-  positions[i * 3] = x;
-  positions[i * 3 + 1] = y;
-  positions[i * 3 + 2] = z;
+  const base = i * 6;
+
+  positions[base] = x;
+  positions[base + 1] = y;
+  positions[base + 2] = z;
+
+  positions[base + 3] = x;
+  positions[base + 4] = y;
+  positions[base + 5] = z;
 
   baseSpeeds[i] = 0.2 + Math.random() * 0.6;
 }
 
-// ===== ACELERAÇÃO GLOBAL =====
+// ===== ACELERAÇÃO =====
 
-let speedMultiplier = 0.05;   // começa quase parado
-let targetSpeed = 8;          // velocidade final
-let acceleration = 0.02;      // taxa de aceleração
-
-// ===== ANIMAÇÃO =====
+let speedMultiplier = 0.03;
+let targetSpeed = 10;
+let acceleration = 0.02;
 
 function animate() {
-  // aumenta gradualmente até atingir a velocidade máxima
   if (speedMultiplier < targetSpeed) {
     speedMultiplier += acceleration;
   }
 
   for (let i = 0; i < STAR_COUNT; i++) {
-    positions[i * 3 + 2] += baseSpeeds[i] * speedMultiplier;
+    const base = i * 6;
+    const speed = baseSpeeds[i] * speedMultiplier;
 
-    if (positions[i * 3 + 2] > 5) {
+    positions[base + 2] += speed;
+
+    const tailLength = speed * 2.5;
+
+    positions[base + 3] = positions[base];
+    positions[base + 4] = positions[base + 1];
+    positions[base + 5] = positions[base + 2] - tailLength;
+
+    if (positions[base + 2] > 5) {
       resetStar(i);
     }
   }
 
   geometry.attributes.position.needsUpdate = true;
-
   renderer.render(scene, camera);
 }
 
 renderer.setAnimationLoop(animate);
-
-// ===== RESPONSIVO =====
 
 window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
